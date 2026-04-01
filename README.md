@@ -25,23 +25,48 @@ A high-end, multi-game arcade platform featuring adaptive logic puzzles, procedu
 
 ## 🚀 Getting Started
 
-### 1. Prerequisites
-- [Node.js](https://nodejs.org/) installed on your machine.
+### 1. Prerequisites (Installing Node.js)
+If you don't have Node.js installed, you can quickly set it up from your terminal:
 
-### 2. Installation
-1. Clone the repository to your local machine.
-2. Navigate to the root directory.
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+**Windows (PowerShell/CMD):**
+```powershell
+winget install OpenJS.NodeJS
+```
 
-### 3. Running Locally
-Start both the Express backend and the development server:
+**macOS (Zsh/Bash):**
+*Requires [Homebrew](https://brew.sh/)*
+```bash
+brew install node
+```
+
+**Linux (Debian/Ubuntu):**
+```bash
+sudo apt update && sudo apt install nodejs npm
+```
+
+### 2. Installation & Setup
+
+**Windows:**
+1. Clone the repo and navigate into the directory.
+2. Run `npm install` to set up all logic engines.
+
+**macOS / Linux:**
+1. Clone the repo and navigate into the directory.
+2. Run `npm install` to initialize the project environment.
+
+### 3. Running the Arcade Hub
+
+**Windows:**
+```powershell
+npm start
+```
+
+**macOS / Linux:**
 ```bash
 npm start
 ```
-The application will be accessible at `http://localhost:3000`.
+
+The mission control will be accessible at `http://localhost:3000`.
 
 ## 🛠️ Tech Stack
 *   **Frontend**: HTML5, CSS3 (Vanilla), JavaScript (ES6+)
