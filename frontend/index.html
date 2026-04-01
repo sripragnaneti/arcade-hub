@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Hub - Adaptive Games</title>
+    <link rel="stylesheet" href="style.css?v=4.4">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <button id="theme-toggle" title="TOGGLE THEME">🌙</button>
+    <div id="arcade-app">
+        <!-- MAZE RUNNER SECTION -->
+        <div id="game-container">
+            <header>
+                <h1>MAZE RUNNER</h1>
+                <div id="hud">
+                    <div class="stat">
+                        <span class="stat-label">DIFFICULTY</span>
+                        <span id="level-display" class="stat-value">EASY</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">MOVES</span>
+                        <span id="moves-display" class="stat-value">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">TIME</span>
+                        <span id="time-display" class="stat-value">00:00</span>
+                    </div>
+                    <div id="bot-status" class="stat" style="display:none; color: var(--bot-color)">
+                        <span class="stat-label">BOT GAP</span>
+                        <span id="bot-distance" class="stat-value">+0</span>
+                    </div>
+                    <button id="quit-btn" class="stat" title="QUIT TO MENU">
+                        <span class="stat-value">ABORT</span>
+                    </button>
+                </div>
+            </header>
+
+            <canvas id="gameCanvas"></canvas>
+
+            <footer id="maze-footer" style="margin-top: 1rem; opacity: 0.5; font-size: 0.7rem;">
+                USE ARROWS OR WASD TO NAVIGATE | v2.0-BOT-MODE
+            </footer>
+        </div>
+
+        <!-- SNAKES & LADDERS SECTION -->
+        <div id="sl-game-container" style="display:none;">
+            <header>
+                <h1 style="color: var(--sl-color);">TRAJECTORY</h1>
+                <div id="sl-hud" class="hud-container">
+                    <div class="stat">
+                        <span class="stat-label">USER</span>
+                        <span id="p-pos" class="stat-value">1</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">BOT</span>
+                        <span id="b-pos" class="stat-value">1</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">DICE</span>
+                        <div id="dice-display" class="dice-box">?</div>
+                    </div>
+                </div>
+            </header>
+
+            <canvas id="slCanvas"></canvas>
+
+            <div class="sl-controls">
+                <button id="roll-btn" class="btn btn-sl">ROLL DICE</button>
+                <button id="sl-new-btn" class="btn btn-sl">NEW GAME</button>
+                <button id="sl-quit-btn" class="btn btn-quit-sl">ABORT</button>
+            </div>
+
+            <div id="sl-status-msg"
+                style="color: var(--sl-color); font-size: 0.8rem; letter-spacing: 0.1em; height: 1rem; margin-top: 0.5rem; font-weight: 700;">
+            </div>
+
+            <footer style="margin-top: 1rem; opacity: 0.5; font-size: 0.7rem;">
+                DICE RNG INITIALIZED | v1.0-TRAJECTORY-MODE
+            </footer>
+        </div>
+
+        <!-- OVERLAYS -->
+        <!-- 1. Arcade Hub (Mode Selection) -->
+        <div id="mode-selection" class="overlay active">
+            <div class="overlay-content game-selector-content">
+                <h1 style="margin-bottom: 2rem;">ARCADE HUB</h1>
+                <div class="game-cards">
+                    <div class="game-card maze-card">
+                        <div class="card-icon">🌀</div>
+                        <h2>MAZE RUNNER</h2>
+                        <p>Adaptive navigation vs neural bot.</p>
+                        <div class="card-actions">
+                            <button id="single-mode-btn" class="btn">SINGLE</button>
+                            <button id="bot-mode-btn" class="btn btn-alt">VS BOT</button>
+                        </div>
+                    </div>
+                    <div class="game-card sl-card">
+                        <div class="card-icon">🎲</div>
+                        <h2>SNAKES & LADDERS</h2>
+                        <p>Procedural trajectory logic.</p>
+                        <div class="card-actions">
+                            <button id="sl-mode-btn" class="btn">INITIALIZE</button>
+                        </div>
+                    </div>
+
+                    <div class="game-card sudoku-card">
+                        <div class="card-icon">🧩</div>
+                        <h2>SUDOKU</h2>
+                        <p>Neural logic configuration trial.</p>
+                        <div class="card-actions">
+                            <button id="sudoku-start-btn" class="btn">INITIALIZE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sudoku-setup" class="overlay">
+            <div class="overlay-content">
+                <h2>CHOOSE DIFFICULTY</h2>
+                <div class="avatar-grid">
+                    <div class="avatar-opt selected" data-diff="EASY">🧩<span>EASY</span></div>
+                    <div class="avatar-opt" data-diff="MEDIUM">🧩<span>MEDIUM</span></div>
+                    <div class="avatar-opt" data-diff="HARD">🧩<span>HARD</span></div>
+                </div>
+                <div style="display: flex; gap: 1rem; width: 100%; margin-top: 2rem;">
+                    <button id="sudoku-begin-btn" class="btn" style="flex: 2;">START PUZZLE</button>
+                    <button class="btn btn-quit-sl setup-abort-btn" style="flex: 1;">ABORT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Snakes & Ladders Setup -->
+        <!-- SUDOKU GAME (Container 3) -->
+        <div id="sudoku-game-container"
+            style="display:none; flex-direction: column; align-items: center; gap: 1rem; width: 100%;">
+            <header>
+                <h1 style="color: var(--sudoku-color);">NEURAL GRID</h1>
+                <div class="hud-container">
+                    <div class="stat">
+                        <span class="stat-label">DIFFICULTY</span>
+                        <span id="sudoku-diff-display" class="stat-value">EASY</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">MISTAKES</span>
+                        <span id="sudoku-mistakes" class="stat-value">0/3</span>
+                    </div>
+                </div>
+            </header>
+
+            <div id="sudoku-board"
+                style="display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px; background: rgba(255,255,255,0.1); border: 2px solid var(--sudoku-color); border-radius: 4px; overflow: hidden;">
+            </div>
+
+            <div class="sudoku-numbers" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button class="num-btn" data-num="1">1</button>
+                <button class="num-btn" data-num="2">2</button>
+                <button class="num-btn" data-num="3">3</button>
+                <button class="num-btn" data-num="4">4</button>
+                <button class="num-btn" data-num="5">5</button>
+                <button class="num-btn" data-num="6">6</button>
+                <button class="num-btn" data-num="7">7</button>
+                <button class="num-btn" data-num="8">8</button>
+                <button class="num-btn" data-num="9">9</button>
+            </div>
+
+            <div class="sl-controls"
+                style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 2rem;">
+                <div style="display: flex; gap: 0.75rem; width: 100%;">
+                    <button id="sudoku-new-easy" class="btn btn-sudoku" data-diff="EASY" style="flex:1;">EASY</button>
+                    <button id="sudoku-new-medium" class="btn btn-sudoku" data-diff="MEDIUM"
+                        style="flex:1;">MEDIUM</button>
+                    <button id="sudoku-new-hard" class="btn btn-sudoku" data-diff="HARD" style="flex:1;">HARD</button>
+                </div>
+                <button id="sudoku-quit-btn" class="btn btn-quit-sl" style="width: 100%;">ABORT</button>
+            </div>
+
+            <footer style="margin-top: 1rem; opacity: 0.5; font-size: 0.7rem;">
+                LOGIC VALIDATION ENGINE | v1.2-NEURAL-MODE
+            </footer>
+        </div>
+
+        <div id="sl-setup" class="overlay">
+            <div class="overlay-content">
+                <h2>CHOOSE YOUR COLOR</h2>
+                <div class="avatar-grid">
+                    <div class="avatar-opt selected" data-color="#a2ff00">🟢<span>NEON</span></div>
+                    <div class="avatar-opt" data-color="#00e5ff">🔵<span>AQUA</span></div>
+                    <div class="avatar-opt" data-color="#ffcc00">🟡<span>GOLD</span></div>
+                    <div class="avatar-opt" data-color="#ff3c00">🔴<span>RUBY</span></div>
+                </div>
+                <div style="display: flex; gap: 1rem; width: 100%; margin-top: 2rem;">
+                    <button id="sl-start-game-btn" class="btn" style="flex: 2;">START MISSION</button>
+                    <button class="btn btn-quit-sl setup-abort-btn" style="flex: 1;">ABORT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Maze Runner Start Setup -->
+        <div id="start-screen" class="overlay">
+            <div class="overlay-content">
+                <h1>MAZE RUNNER</h1>
+                <p>SELECT YOUR CHALLENGE</p>
+                <div class="setup-controls">
+                    <div class="control-group">
+                        <label>GRID SIZE</label>
+                        <input type="number" id="start-grid-size" value="8" min="6" max="30">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; width: 100%; margin-top: 2rem;">
+                    <button id="start-btn" class="btn" style="flex: 2;">INITIALIZE SYSTEM</button>
+                    <button class="btn btn-quit-sl setup-abort-btn" style="flex: 1;">ABORT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Maze Runner Win/Loss Overlay -->
+        <div id="overlay" class="overlay">
+            <div class="overlay-content">
+                <h2 id="overlay-title">LEVEL COMPLETE</h2>
+                <div id="stats-summary"></div>
+                <div class="setup-controls next-level-setup">
+                    <h3>SYSTEM RECOMMENDATION: <span id="recommendation-text" style="color:var(--accent)">10x10</span>
+                    </h3>
+                    <div class="control-group">
+                        <label>CUSTOM GRID SIZE</label>
+                        <input type="number" id="next-grid-size" value="10" min="6" max="30">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; width: 100%; margin-top: 2rem;">
+                    <button id="next-btn" class="btn" style="flex: 2;">START NEXT RUN</button>
+                    <button class="btn btn-quit-sl setup-abort-btn" style="flex: 1;">ABORT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+
+</html>
